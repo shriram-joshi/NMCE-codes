@@ -1,12 +1,13 @@
 clearvars;
 clc;
-disp("Trapezoidal rule");
+disp("Simpson's 1/3rd Rule");
 
 %Enter basic info here
 a=0;
 b=0.8;
 n=4;
 h = (b-a)/n;
+disp("h = " + h)
 %Enter true value if mentioned else equate to = [];
 true_value = 1.640533;
 
