@@ -2,7 +2,7 @@
 % Ahmed Mekkawy
 % This code solves for quadratic interpolation
 clearvars;
-clc;
+format long e;
 x   =   [-160 -60 0 80];
 y   =   [4.72.*10.^-6 5.58.*10.^-6 6.*10.^-6 6.47.*10.^-6];
 N   =   length(x)-1;

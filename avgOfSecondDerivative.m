@@ -1,3 +1,7 @@
+clearvars;
+clc;
+format long;
+
 a=0;
 b=0.8;
 

@@ -1,5 +1,6 @@
 clearvars;
 clc;
+format long e;
 disp("Trapezoidal rule");
 
 %Enter basic info here
@@ -23,8 +24,8 @@ for i = 2:1:n
     I = I + h.*f(x(i));
 end
 
-Et = true_value-I;
-perEt = 100*abs(Et/true_value);
+et = true_value-I;
+Et = 100*abs(et/true_value);
 
 %displaying results
 disp("h = " + h)
@@ -34,8 +35,8 @@ disp("f(xi)=");
 disp(f(x));
 disp("True value = " + true_value);
 disp("I = " + I);
-disp("Et = " + Et);
-disp("%Et = " + perEt);
+disp("Et = " + et);
+disp("%Et = " + Et);
 
 function fx = f(x)
     %define your function here
