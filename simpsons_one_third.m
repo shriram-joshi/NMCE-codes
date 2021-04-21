@@ -7,35 +7,43 @@ a=0;
 b=0.8;
 n=4;
 h = (b-a)/n;
-disp("h = " + h)
-%Enter true value if mentioned else equate to = [];
-true_value = 1.640533;
+x = zeros(1,n-1);
+
+%Enter true value if mentioned else put 'trueValue = integral(@f,a,b);'
+true_value = integral(@f,a,b);
 
 for i = 1:1:n+1
     x(i)=a+(i-1).*h;
-    %Enter your function here
-    fx(i) = (0.2 + 25*x(i) - 200*x(i).^2 + 675*x(i).^3 - 900*x(i).^4 + 400*x(i).^5);
 end
 
-I = (h./3).*(fx(1) + fx(n+1));
+I = (h./3).*(f(x(1)) + f(x(n+1)));
 
 for i = 2:1:n
     if rem((i-1),2)==0
-        I = I + (2*h/3)*fx(i);
+        I = I + (2*h/3)*f(x(i));
     else 
-        I = I + (4*h/3)*fx(i);
+        I = I + (4*h/3)*f(x(i));
     end
 end
 
-if ~isempty(true_value)
-    Et = true_value-I;
-    perEt = 100*abs(Et/true_value);
-    disp("Et = " + Et);
-    disp("%Et = " + perEt);
+Et = true_value-I;
+perEt = 100*abs(Et/true_value);
+
+%displaying results
+disp("h = " + h)
+disp("x = ");
+disp(x);
+disp("f(xi)=");
+disp(f(x));
+disp("True value = " + true_value);
+disp("I = " + I);
+disp("Et = " + Et);
+disp("%Et = " + perEt);
+
+function fx = f(x)
+    %define your function here
+    fx = (0.2 + 25*x - 200*x.^2 + 675*x.^3 - 900*x.^4 + 400*x.^5);
 end
 
-display(x);
-display(fx);
-disp("I = " + I);
 
 
