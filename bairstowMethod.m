@@ -3,13 +3,15 @@ clearvars;
 pol = [4,12,13,12,9]; % in the form a0 + a1x + a2x^2 + ... + anx^n
 es = 1;
 r = -1.3333;
-s = -0.4444;
+s = -0.44444;
 
 %initialization 
 iter = 0;
 n = length(pol);
 ea_r = 100;
 ea_s = 100;
+b = zeros(1,n);
+c = zeros(1,n);
 
 while (ea_r > es && ea_s > es)
     iter = iter + 1;
@@ -26,9 +28,11 @@ while (ea_r > es && ea_s > es)
     end
     
     disp("from b0 to bn");
-    display(b); %from b0 to bn
+    disp("b=");
+    disp(b); %from b0 to bn
+    disp("c=");
     disp("from c0 to cn, note: c0 is not needed but still displayed");
-    display(c); %from c0 to cn, note: c0 is not needed but still displayed
+    disp(c); %from c0 to cn, note: c0 is not needed but still displayed
     
     det = c(3)*c(3) - c(4)*c(2);
     
