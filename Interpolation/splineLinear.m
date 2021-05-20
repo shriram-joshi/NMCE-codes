@@ -1,6 +1,8 @@
 clearvars;
 clc;
 
+format short;
+
 x = [3,4.5,7,9];
 fx = [2.5,1,2.5,0.5];
 
@@ -23,6 +25,7 @@ if (length(x) == length(fx))
 
     disp("y=");
     disp(y);
+    plot(x,fx);
 else
     disp("Your data is inconsistent. Length of fx and x array should be equal");
 end

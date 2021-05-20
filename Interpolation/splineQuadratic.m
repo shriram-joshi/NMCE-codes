@@ -2,9 +2,9 @@
 % Ahmed Mekkawy
 % This code solves for quadratic interpolation
 clearvars;
-format long e;
-x   =   [-160 -60 0 80];
-y   =   [4.72.*10.^-6 5.58.*10.^-6 6.*10.^-6 6.47.*10.^-6];
+format short;
+x   =   [3 4.5 7 9];
+y   =   [2.5 1 2.5 0.5];
 N   =   length(x)-1;
 % The unknowns are 3*N with ao=0 "Linear Spline"
 % Filling Matrix from point matching
