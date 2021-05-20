@@ -11,14 +11,14 @@ h = 0.5;
 y1 = 4;
 y2 = 6;
 
-% Calculations
+% Instantiation and Calculations
 n = (b-a)/h;
-x = zeros(1,n+1);
-y = zeros(2,n+1);
-k1 = zeros(2,n+1);
-k2 = zeros(2,n+1);
-k3 = zeros(2,n+1);
-k4 = zeros(2,n+1);
+x = zeros(1,n);
+y = zeros(2,n);
+k1 = zeros(1,2);
+k2 = zeros(1,2);
+k3 = zeros(1,2);
+k4 = zeros(1,2);
 y(1,1) = y1;
 y(2,1) = y2;
 
@@ -27,18 +27,28 @@ for i = 1:1:n+1
 end
 
 for i = 1:1:n
-   [k1(1,i), k1(2,i)] = f(x(i),y(1,i), y(2,i));
-   [k2(1,i), k2(2,i)] = f(x(i) + h/2, y(1,i) + (k1(1,i)*h)/2, y(2,i) + (k1(2,i)*h)/2);
-   [k3(1,i), k3(2,i)] = f(x(i) + h/2, y(1,i) + (k2(1,i)*h)/2, y(2,i) + (k2(2,i)*h)/2);
-   [k4(1,i), k4(2,i)] = f(x(i) + h, y(1,i) + k3(1,i)*h, y(2,i) + k3(2,i)*h);
-   y(1,i+1)= y(1,i) + (h/6)*(k1(1,i) + 2*k2(1,i) + 2*k3(1,i) + k4(1,i));
-   y(2,i+1)= y(2,i) + (h/6)*(k1(2,i) + 2*k2(2,i) + 2*k3(2,i) + k4(2,i));
+   [k1(1), k1(2)] = f(x(i),y(1,i), y(2,i));
+   [k2(1), k2(2)] = f(x(i) + h/2, y(1,i) + (k1(1)*h)/2, y(2,i) + (k1(2)*h)/2);
+   [k3(1), k3(2)] = f(x(i) + h/2, y(1,i) + (k2(1)*h)/2, y(2,i) + (k2(2)*h)/2);
+   [k4(1), k4(2)] = f(x(i) + h, y(1,i) + k3(1)*h, y(2,i) + k3(2)*h);
+   y(1,i+1)= y(1,i) + (h/6)*(k1(1) + 2*k2(1) + 2*k3(1) + k4(1));
+   y(2,i+1)= y(2,i) + (h/6)*(k1(2) + 2*k2(2) + 2*k3(2) + k4(2));
+   
+   disp("For iteration " + i + ":");
+   for c = 1:1:2
+      disp("k1"+c+"="+k1(c));
+      disp("k2"+c+"="+k2(c));
+      disp("k3"+c+"="+k3(c));
+      disp("k4"+c+"="+k4(c));
+   end
+   
+   disp("y1("+x(i+1)+")= " + y(1,i+1));
+   disp("y2("+x(i+1)+")= " + y(2,i+1));
+   disp("------------------");
 end
 
-disp("k11 k12 k21 k22 k31 k32 k41 k42 - columns respectively")
-k = [transpose(k1) transpose(k2) transpose(k3) transpose(k4)];
-disp(k);
 result = [ transpose(x) transpose(y)];
+disp("Final result:-");
 disp("x y1 y2 - columns respectively")
 disp(result);
 
