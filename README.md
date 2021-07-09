@@ -9,4 +9,4 @@ This is a repository for some of the MatLab codes for the Numerical Methods in C
 
 > Thank you! And I hope this is of some help to you.
 > Regards, 
-> Shriram Joshi (mailto:f20191127@goa.bits-pilani.ac.in)
+> Shriram Joshi (f20191127@goa.bits-pilani.ac.in)
