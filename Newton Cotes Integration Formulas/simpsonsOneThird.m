@@ -2,7 +2,8 @@ clearvars;
 clc;
 disp("Simpson's 1/3rd Rule");
 
-%Enter basic info here
+%Enter basic info here. To define the function to be integrated check the
+%end of the code
 a=0;
 b=0.8;
 n=4;
