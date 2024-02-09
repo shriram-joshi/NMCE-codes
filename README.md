@@ -6,6 +6,6 @@ This is a repository for some of the MatLab codes for the Numerical Methods in C
 2. Use the branch with the name 'Improvements' for pull requests.
 3. Follow the camel case (Eg. firstNmceCode.m) and snake case (Eg. first_variable) naming conventions for files/classes and variables repectively.
 4. Please make a proper pull request for any changes and describe them correctly so that it is easier for me to audit and merge.
-5. If you need any help with the repository you can [mail me here](mailto:f20191127@goa.bits-pilani.ac.in). 
+5. If you need any help with the repository you can [mail me here](mailto:joshi267@purdue.edu). 
 
 Thank you! And I hope this is of some help to you.
