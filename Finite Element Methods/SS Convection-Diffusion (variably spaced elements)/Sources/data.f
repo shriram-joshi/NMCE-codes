@@ -11,9 +11,50 @@ Module Data_
     real(kind=rk) :: ph1(3,6),dph1(3,6)
     real(kind=rk), dimension(6) :: xiarr
     real(kind=rk), dimension(3) :: wei
+
+    real(kind=rk) :: Pe
+    real(kind=rk), dimension(:), allocatable :: R, h
+    real(kind=rk), dimension(:,:), allocatable :: J, jl
+    real(kind=rk), dimension(2) :: ubc, xspan
+
+    integer :: n, nl, c
+
 contains
 
     ! You can make subroutines here
+
+    subroutine Init_problem()
+        ! Total number of ELEMENTS
+        n = 10
+        ! Size of the local matrix, depends on type of elements
+        ! 2 for linear, 3 for quadratic, so on
+        nl = 2 
+
+        ! Setup Pe number and Neumann boundary conditions
+        Pe = 50.0_rk
+        ! BC for u
+        ubc = (/0.0_rk, 1.0_rk/)
+        ! Span of the domain
+        xspan = (/0.0_rk, 1.0_rk/)
+
+        ! Initiallize variables
+        allocate(jl(nl,nl))
+        allocate(R(n+1))
+        ! We allocate n+2 columns since the FullGaussSolverp function requires a matrix with dimesnions (n,n+1)
+        ! Check the FullGaussSolverp.f file for details
+        allocate(J(n+1,n+2)) 
+        allocate(h(n))
+
+        h(1) = 0.45_rk
+        h(2) = 0.45_rk
+        h(3:n) = (1.0_rk-0.9_rk)/8.0_rk
+        
+        R(1:n+1) = 0.0_rk
+        jl(1:nl,1:nl) = 0.0_rk
+        J(1:n+1,1:n+2) = 0.0_rk
+
+    end subroutine Init_problem
+
     subroutine Gauss_points()
         implicit none
 
