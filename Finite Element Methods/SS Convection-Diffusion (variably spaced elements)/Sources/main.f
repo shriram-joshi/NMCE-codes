@@ -50,6 +50,7 @@ program main
     do i = 1, n+1
         write(*, fmt='(F15.2)', advance='no') R(i)
     end do
+    print *
 
     u = real(R)
     Jtemp = real(J)
@@ -60,13 +61,14 @@ program main
     do i = 1, n+1
         write(*, fmt='(F15.4)', advance='no') u(i)
     end do
+    print *
         
-    ! Output data into a file 
-    open(1, file = 'SSCDVar.dat', status='new')  
-    do i = 1,n+1  
-       write(1,*) u(i)   
-    end do  
-    close(1)
+    ! ! Output data into a file 
+    ! open(1, file = 'SSCDVar.dat', status='new')  
+    ! do i = 1,n+1  
+    !    write(1,*) u(i)   
+    ! end do  
+    ! close(1)
 
     deallocate(jl)
     deallocate(R)

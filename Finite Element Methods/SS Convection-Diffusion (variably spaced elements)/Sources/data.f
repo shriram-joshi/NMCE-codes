@@ -15,7 +15,7 @@ Module Data_
     real(kind=rk) :: Pe
     real(kind=rk), dimension(:), allocatable :: R, h
     real(kind=rk), dimension(:,:), allocatable :: J, jl
-    real(kind=rk), dimension(2) :: ubc, xspan
+    real(kind=rk), dimension(2) :: ubc
 
     integer :: n, nl, c
 
@@ -34,8 +34,6 @@ contains
         Pe = 50.0_rk
         ! BC for u
         ubc = (/0.0_rk, 1.0_rk/)
-        ! Span of the domain
-        xspan = (/0.0_rk, 1.0_rk/)
 
         ! Initiallize variables
         allocate(jl(nl,nl))
