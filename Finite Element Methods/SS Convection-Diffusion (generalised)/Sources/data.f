@@ -13,10 +13,9 @@ Module Data_
     real(kind=rk), dimension(3) :: wei
 
     real(kind=rk) :: Pe, h
-    real(kind=rk), dimension(:), allocatable :: R
-    real(kind=rk), dimension(:,:), allocatable :: J, jl
-    real(kind=rk), dimension(2) :: ubc, xspan
-
+    real(kind=rk), dimension(:), allocatable :: R, xMesh
+    real(kind=rk), dimension(:,:), allocatable :: JG, jL
+    real(kind=rk), dimension(2) :: uBC, xSpan
     integer :: n, nl
 
 contains
@@ -33,20 +32,22 @@ contains
         ! Setup Pe number and Neumann boundary conditions
         Pe = 50.0_rk
         ! BC for u
-        ubc = (/0.0_rk, 1.0_rk/)
-        ! Span of the domain
-        xspan = (/0.0_rk, 1.0_rk/)
+        uBC = (/0.0_rk, 1.0_rk/)
+        ! Domain of x
+        xSpan = (/0.0_rk, 1.0_rk/)
 
         ! Initiallize variables
-        allocate(jl(nl,nl))
+        allocate(jL(nl,nl))
         allocate(R(n+1))
         ! We allocate n+2 columns since the FullGaussSolverp function requires a matrix with dimesnions (n,n+1)
         ! Check the FullGaussSolverp.f file for details
-        allocate(J(n+1,n+2)) 
+        allocate(JG(n+1,n+2))
+        allocate(xMesh(n+1))
 
+        R(1:n+1) = 0.0_rk 
         R(1:n+1) = 0.0_rk
-        jl(1:nl,1:nl) = 0.0_rk
-        J(1:n+1,1:n+2) = 0.0_rk
+        jL(1:nl,1:nl) = 0.0_rk
+        JG(1:n+1,1:n+2) = 0.0_rk
 
     end subroutine Init_problem
 
