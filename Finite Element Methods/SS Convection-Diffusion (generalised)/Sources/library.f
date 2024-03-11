@@ -12,12 +12,6 @@ contains
     subroutine lin_basis_phi1d()
         integer :: j
 
-        ! if(3 /= size(ph1)/size(ph1(:,6)))then
-        !     print*, (size(ph1)/size(ph1(:,6)))
-        !     print*, "Cant use linear basis function subroutine. Change nl in data.f to match the required type of basis functions."
-        !     stop
-        ! end if
-
         ph1=0.0_rk
         dph1=0.0_rk
         do j=1,3
@@ -36,12 +30,6 @@ contains
 !***********************************************************************************************************************
     subroutine quad_basis_phi1d()
         integer :: j
-
-        ! if(3 /= size(ph1)/size(ph1(:,6)))then
-        !     print*, size(ph1)/size(ph1(:,6))
-        !     print*, "Cant use quadratic basis function subroutine. Change nl in data.f to match the required type of basis functions."
-        !     stop
-        ! end if
 
         ph1=0.0_rk
         dph1=0.0_rk

@@ -23,14 +23,26 @@ contains
     ! You can make subroutines here
 
     subroutine Init_problem()
-        ! Total number of ELEMENTS
-        n = 10
+        n=0
+        do while (n <= 0)
+            ! Total number of ELEMENTS
+            print*, "Number of elements (n > 0) - "
+            read*, n
+            print*
+        end do
+
+        Pe = -1
+        do while (Pe < 0)
+            ! Setup Pe number and Neumann boundary conditions
+            print*, "Peclet Number (Pe >= 0) - "
+            read*, Pe
+            print*
+        end do
+
         ! Size of the local matrix, depends on type of elements
         ! 2 for linear, 3 for quadratic, so on
         nl = 2 
 
-        ! Setup Pe number and Neumann boundary conditions
-        Pe = 1.0_rk
         ! BC for u
         uBC = (/0.0_rk, 1.0_rk/)
         ! Range of x
@@ -46,9 +58,8 @@ contains
         allocate(ph1(nl,3))
         allocate(dph1(nl,3))
 
-        R(1:n+1) = 0.0_rk 
-        R(1:n+1) = 0.0_rk
-        jL(1:nl,1:nl) = 0.0_rk
+        R = 0.0_rk
+        jL = 0.0_rk
         JG(1:n+1,1:n+2) = 0.0_rk
 
     end subroutine Init_problem
