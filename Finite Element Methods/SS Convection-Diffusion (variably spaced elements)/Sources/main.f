@@ -22,9 +22,18 @@ program main
     do k = 1,n,1
 
         h = xMesh(k+1)-xMesh(k)
+        ! print*, "h = ", h
 
         ! The local j matrix
         jl = reshape((/ 1.0_rk/h - Pe/2.0_rk, -1.0_rk/h - Pe/2.0_rk, -1.0_rk/h + Pe/2.0_rk, 1.0_rk/h + Pe/2.0_rk /), shape(jl))
+
+        print*, "Local j ="
+        do i = 1, nl
+            do l = 1, nl
+                write(*, fmt='(F15.2)', advance='no') jl(i, l)
+            end do
+            print *  ! Move to the next line after printing each row
+        end do
 
         ! Assemble the global J matrix [Ju = R]
         J(k:k+nl-1,k:k+nl-1) = J(k:k+nl-1,k:k+nl-1) + jl

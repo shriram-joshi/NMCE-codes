@@ -57,9 +57,9 @@ contains
         ! Check the FullGaussSolverp.f file for details
         allocate(J(n+1,n+2)) 
         
-        R(1:n+1) = 0.0_rk
-        jl(1:nl,1:nl) = 0.0_rk
-        J(1:n+1,1:n+2) = 0.0_rk
+        R = 0.0_rk
+        jl = 0.0_rk
+        J = 0.0_rk
 
     end subroutine Init_problem
 
