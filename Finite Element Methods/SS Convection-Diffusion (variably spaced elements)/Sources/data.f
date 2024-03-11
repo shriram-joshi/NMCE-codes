@@ -12,12 +12,12 @@ Module Data_
     real(kind=rk), dimension(6) :: xiarr
     real(kind=rk), dimension(3) :: wei
 
-    real(kind=rk) :: Pe, h
-    real(kind=rk), dimension(:), allocatable :: R
+    real(kind=rk) :: Pe
+    real(kind=rk), dimension(:), allocatable :: R, xMesh
     real(kind=rk), dimension(:,:), allocatable :: J, jl
-    real(kind=rk), dimension(2) :: ubc, xspan
+    real(kind=rk), dimension(2) :: ubc, xSpan
 
-    integer :: n, nl
+    integer :: n, nl, c
 
 contains
 
@@ -44,22 +44,22 @@ contains
         ! 2 for linear, 3 for quadratic, so on
         nl = 2 
 
-        
         ! BC for u
         ubc = (/0.0_rk, 1.0_rk/)
-        ! Span of the domain
-        xspan = (/0.0_rk, 1.0_rk/)
+        ! Range of x
+        xSpan = (/0.0_rk, 1.0_rk/)
 
         ! Initiallize variables
         allocate(jl(nl,nl))
         allocate(R(n+1))
+        allocate(xMesh(n+1))
         ! We allocate n+2 columns since the FullGaussSolverp function requires a matrix with dimesnions (n,n+1)
         ! Check the FullGaussSolverp.f file for details
         allocate(J(n+1,n+2)) 
-
-        R(1:n+1) = 0.0_rk
-        jl(1:nl,1:nl) = 0.0_rk
-        J(1:n+1,1:n+2) = 0.0_rk
+        
+        R = 0.0_rk
+        jl = 0.0_rk
+        J = 0.0_rk
 
     end subroutine Init_problem
 
