@@ -1,4 +1,4 @@
-Module ns1d_slender
+Module library
 
     use kind
     use Data_
@@ -26,4 +26,32 @@ contains
 ! Basis functions End
 !***********************************************************************************************************************
 
-end module ns1d_slender
+!***********************************************************************************************************************
+! Generate Variably Spaced Mesh
+!***********************************************************************************************************************
+    subroutine generate_mesh()
+            
+        implicit none
+
+        integer :: i
+        real(kind=rk) :: A, B
+
+        A = ((n+1)*xSpan(2)-xSpan(1))/n
+        B = xSpan(1)-A
+        ! Mesh generated according x = A+B/i
+        do i = 1, n+1
+            xMesh(i) = A + B/i
+        end do
+
+        ! Uncomment to print out mesh points
+        print*, "Variable mesh points "
+        do i = 1, n+1
+            write(*, fmt='(F15.4)', advance='no') xMesh(i)
+        end do
+
+    end subroutine generate_mesh
+!***********************************************************************************************************************
+! Generate Variably Spaced End
+!***********************************************************************************************************************
+
+end module library

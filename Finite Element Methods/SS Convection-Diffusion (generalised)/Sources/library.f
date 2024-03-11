@@ -7,23 +7,55 @@ Module library
 
 contains
 !***********************************************************************************************************************
-! Basis functions
+! Linear Basis functions
 !***********************************************************************************************************************
-    subroutine basis_phi1d()
+    subroutine lin_basis_phi1d()
         integer :: j
+
+        ! if(3 /= size(ph1)/size(ph1(:,6)))then
+        !     print*, (size(ph1)/size(ph1(:,6)))
+        !     print*, "Cant use linear basis function subroutine. Change nl in data.f to match the required type of basis functions."
+        !     stop
+        ! end if
+
         ph1=0.0_rk
         dph1=0.0_rk
-        do j=1,6
+        do j=1,3
+            ph1(1,j) = 1.0_rk - xiarr(j)
+            dph1(1,j)= -1.0_rk
+            ph1(2,j) = xiarr(j)
+            dph1(2,j)= 1.0_rk
+        end do
+    end subroutine lin_basis_phi1d
+!***********************************************************************************************************************
+! Linear Basis functions End
+!***********************************************************************************************************************
+
+!***********************************************************************************************************************
+! Quadratic Basis functions
+!***********************************************************************************************************************
+    subroutine quad_basis_phi1d()
+        integer :: j
+
+        ! if(3 /= size(ph1)/size(ph1(:,6)))then
+        !     print*, size(ph1)/size(ph1(:,6))
+        !     print*, "Cant use quadratic basis function subroutine. Change nl in data.f to match the required type of basis functions."
+        !     stop
+        ! end if
+
+        ph1=0.0_rk
+        dph1=0.0_rk
+        do j=1,3
             ph1(1,j) = 1.0_rk - 3.0_rk*xiarr(j) + 2.0_rk*xiarr(j)*xiarr(j)
             dph1(1,j)= -3.0_rk + 4.0_rk*xiarr(j)
             ph1(2,j) = 4.0_rk*(xiarr(j) - xiarr(j)*xiarr(j))
             dph1(2,j)= 4.0_rk - 8.0_rk*xiarr(j)
             ph1(3,j) = - xiarr(j) + 2.0_rk*xiarr(j)*xiarr(j)
             dph1(3,j)= -1.0_rk+4.0_rk*xiarr(j)
-        enddo
-    end subroutine basis_phi1d
+        end do
+    end subroutine quad_basis_phi1d
 !***********************************************************************************************************************
-! Basis functions End
+! Quadratic Basis functions End
 !***********************************************************************************************************************
 
 !***********************************************************************************************************************
@@ -72,10 +104,10 @@ contains
         end do
 
         ! Uncomment to print out mesh points
-        ! print*, "Uniform mesh points"
-        ! do i = 1, n+1
-        !     write(*, fmt='(F15.4)', advance='no') xMesh(i)
-        ! end do
+        print*, "Uniform mesh points"
+        do i = 1, n+1
+            write(*, fmt='(F15.4)', advance='no') xMesh(i)
+        end do
 
     end subroutine generate_uniform_mesh
 !***********************************************************************************************************************

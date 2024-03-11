@@ -8,8 +8,8 @@ Module Data_
     ! Examples are:
     real(kind=rk) :: C1, C2
     real(kind=rk) :: Oh, Gbond
-    real(kind=rk) :: ph1(3,6),dph1(3,6)
-    real(kind=rk), dimension(6) :: xiarr
+    real(kind=rk), allocatable, dimension(:,:) :: ph1, dph1
+    real(kind=rk), dimension(3) :: xiarr
     real(kind=rk), dimension(3) :: wei
 
     real(kind=rk) :: Pe, h
@@ -30,10 +30,10 @@ contains
         nl = 2 
 
         ! Setup Pe number and Neumann boundary conditions
-        Pe = 50.0_rk
+        Pe = 1.0_rk
         ! BC for u
         uBC = (/0.0_rk, 1.0_rk/)
-        ! Domain of x
+        ! Range of x
         xSpan = (/0.0_rk, 1.0_rk/)
 
         ! Initiallize variables
@@ -43,6 +43,8 @@ contains
         ! Check the FullGaussSolverp.f file for details
         allocate(JG(n+1,n+2))
         allocate(xMesh(n+1))
+        allocate(ph1(nl,3))
+        allocate(dph1(nl,3))
 
         R(1:n+1) = 0.0_rk 
         R(1:n+1) = 0.0_rk
@@ -57,9 +59,6 @@ contains
         xiarr(1)=(1.0_rk-0.774596669241483_rk)*0.5_rk
         xiarr(2)=0.5_rk
         xiarr(3)=(1.0_rk+0.774596669241483_rk)*0.5_rk
-        xiarr(4)=0.0_rk
-        xiarr(5)=0.5_rk
-        xiarr(6)=1.0_rk
         wei(1)=(0.555555555555556_rk)*0.5_rk
         wei(2)=(0.888888888888889_rk)*0.5_rk
         wei(3)=(0.555555555555556_rk)*0.5_rk
