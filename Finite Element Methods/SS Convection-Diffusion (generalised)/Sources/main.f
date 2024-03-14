@@ -8,18 +8,19 @@ program main
 
     integer :: i, j, k, l
     real(kind=rk), dimension(3) :: dxdxi
-    Real*8, allocatable :: u(:), Jtemp(:,:)
 
     call Init_problem()
     call Gauss_points()
-    call lin_basis_phi1d()
-    ! Creates a array of mesh points
-    call generate_mesh()
 
-    allocate(u(n+1))
-    allocate(Jtemp(n+1, n+2))
+    if(nl == 2) then
+        call lin_basis_phi1d()
+    else if (nl == 3) then
+        call quad_basis_phi1d()
+    end if
+    
+    call generate_varmesh()
 
-    do k = 1,n ! Change according to basis function used
+    do k = 1,n,nl-1 ! Change according to basis function used
 
         ! Calculate dx/dxi
         dxdxi = 0
@@ -28,9 +29,6 @@ program main
                 dxdxi(l) = dxdxi(l) + xMesh(k+i-1)*dph1(i,l) 
             end do
         end do
-
-        ! Uncomment to print the dx/dxi term
-        ! print*, "dx/dxi = ", dxdxi
 
         ! Calculate the local j matrix
         jL = 0
@@ -42,15 +40,6 @@ program main
                 end do
             end do
         end do
-
-        ! Uncomment to print local j matrices
-        ! print*, "Local j ="
-        ! do i = 1,nl
-        !     do j = 1,nl
-        !         write(*, fmt='(F15.2)', advance='no') jL(i, j)
-        !     end do
-        !     print *  ! Move to the next line after printing each row
-        ! end do
 
         ! Add local j to the global J matrix [Ju = R]
         JG(k:k+nl-1,k:k+nl-1) = JG(k:k+nl-1,k:k+nl-1) + jL
@@ -67,28 +56,15 @@ program main
     JG(1,1) = 1.0_rk
     JG(n+1,n+1) = 1.0_rk
 
-    print*, "Global J ="
+    call printProblemSetup()
+
+    call FullGaussSolverp(JG, R, n+1)
+
+    print*, "Solution, c(x) ="
     do i = 1, n+1
-        do l = 1, n+1
-            write(*, fmt='(F15.2)', advance='no') JG(i, l)
-        end do
-        print *  ! Move to the next line after printing each row
+        write(*, fmt='(F15.4)', advance='no') R(i)
     end do
-
-    print*, "R ="
-    do i = 1, n+1
-        write(*, fmt='(F15.2)', advance='no') R(i)
-    end do
-
-    u = real(R)
-    Jtemp = real(JG)
-
-    call FullGaussSolverp(Jtemp, u, n+1)
-
-    print*, "u ="
-    do i = 1, n+1
-        write(*, fmt='(F15.4)', advance='no') u(i)
-    end do
+    print*
         
     ! Output data into a file 
     ! open(1, file = 'SSCDVar-Pe_50.dat', status='new')  
@@ -100,6 +76,30 @@ program main
     deallocate(jL)
     deallocate(R)
     deallocate(JG)
-    deallocate(Jtemp)
-    deallocate(u)
+
+contains
+
+    subroutine printProblemSetup()
+
+        print*, "Global J ="
+        do i = 1, n+1
+            do l = 1, n+1
+                write(*, fmt='(F15.2)', advance='no') JG(i, l)
+            end do
+            print *  ! Move to the next line after printing each row
+        end do
+
+        print*, "R ="
+        do i = 1, n+1
+            write(*, fmt='(F15.2)', advance='no') R(i)
+        end do
+        print*
+
+        ! Uncomment to print out mesh points
+        print*, "Variable mesh points, x ="
+        do i = 1, n+1
+            write(*, fmt='(F15.4)', advance='no') xMesh(i)
+        end do
+        print*
+    end subroutine printProblemSetup
 end program
