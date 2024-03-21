@@ -6,45 +6,52 @@ Module Data_
 
     ! Declare Global variables that will be frequently used during simulation
     ! Examples are:
-    real(kind=rk) :: C1, C2
-    real(kind=rk) :: Oh, Gbond
-    real(kind=rk), allocatable, dimension(:,:) :: ph1, dph1
-    real(kind=rk), dimension(3) :: xiarr
-    real(kind=rk), dimension(3) :: wei
 
-    real(kind=rk) :: Pe, h
-    real(kind=rk), dimension(:), allocatable :: R, xMesh
-    real(kind=rk), dimension(:,:), allocatable :: JG, jL
-    real(kind=rk), dimension(2) :: uBC, xSpan
-    integer :: n, nl, nVar
+    real(kind=rk):: Pe
+    real(kind=rk), allocatable, dimension(:,:):: ph1, dph1
+    real(kind=rk), dimension(3):: xiarr
+    real(kind=rk), dimension(3):: wei
+    real(kind=rk), dimension(:), allocatable:: RG, rL, xMesh
+    real(kind=rk), dimension(:,:), allocatable:: JG, jL
+    real(kind=rk), dimension(2):: uBC, xSpan
+    integer :: nE, bft, nMesh, nVar, nLVar, nLP
+    integer, dimension(:,:), allocatable:: nop
 
 contains
-
     ! You can make subroutines here
 
-    subroutine Init_problem()
+    subroutine init_problem()
+        implicit none
         
         call param_input()
-        ! BC for u
-        uBC = (/0.0_rk, 1.0_rk/)
-        ! Range of x
+
+        allocate(nop(nLP, nE))
+
+        call generate_nop()
+
+        ! Range of independant variable
         xSpan = (/0.0_rk, 1.0_rk/)
+        ! BC for dependant variable
+        uBC = (/0.0_rk, 1.0_rk/)
 
         ! Initiallize variables
-        allocate(jL(nl,nl))
-        allocate(R(nVar))
-        ! We allocate nVar+1 columns since the FullGaussSolverp function requires a matrix with dimesnions (j,j+1)
+        allocate(jL(nLVar,nLVar))
+        allocate(rL(nLVar))
+        allocate(RG(nVar))
+        ! We allocate nE+2 columns since the FullGaussSolverp function requires a matrix with dimesnions (j,j+1)
         ! Check the FullGaussSolverp.f file for details
         allocate(JG(nVar,nVar+1))
-        allocate(xMesh(n+1))
-        allocate(ph1(nl,3))
-        allocate(dph1(nl,3))
+        allocate(xMesh(nVar))
+        allocate(ph1(nLP,3))
+        allocate(dph1(nLP,3))
 
-        R = 0.0_rk
+        ! Initialize all matrices
+        rL = 0.0_rk
+        RG = 0.0_rk
         jL = 0.0_rk
         JG = 0.0_rk
 
-    end subroutine Init_problem
+    end subroutine init_problem
 
     subroutine Gauss_points()
         implicit none
@@ -59,15 +66,15 @@ contains
     end subroutine Gauss_points
 
     subroutine param_input()
-        n=0
-        do while (n <= 0)
+        implicit none
+
+        nE=0
+        do while (nE <= 0)
             ! Total number of ELEMENTS
             print*, "Number of elements (n > 0) - "
-            read*, n
+            read*, nE
             print*
         end do
-
-        nVar = n+1
 
         Pe = -1
         do while (Pe < 0)
@@ -79,16 +86,47 @@ contains
 
         ! Size of the local matrix, depends on type of elements
         ! 2 for linear, 3 for quadratic, so on
-        nl = 0
-        do while (.not.((nl == 2) .or. (nl == 3)))
+        bft = 0
+        do while ((bft <= 0) .or. (bft > 2))
             ! Total number of ELEMENTS
-            print*, "Type of linear basis function."
-            print*, "2 for Linear Basis Functions"
-            print*, "3 for Quadratric Basis Functions"
-            read*, nl
+            print*, "Type - "
+            print*, "1 for Linear Basis Functions"
+            print*, "2 for Quadratric Basis Functions"
+            read*, bft
             print*
         end do
 
+        ! Set number of local points nLP based on type of basis function
+        if (bft == 1) then
+            nLP = 2;
+        else if (bft == 2) then
+            nLP = 3;
+        end if
+
+        nLVar = nLP;
+        nMesh = (nLP-1)*(nE-1) + nLP
+        nVar = nMesh ! Change this if there are multiple unkowns points
+
     end subroutine param_input 
+
+    subroutine generate_nop()
+        implicit none
+        
+        integer:: i, j
+
+        do i = 1,nLP
+            do j = 1,nE
+                nop(i,j) = (nLP-1)*(j-1)+i
+            end do
+        end do
+
+        print*, "nop ="
+        do i = 1, nLP
+            do j = 1, nE
+                write(*, fmt='(I8)', advance='no') nop(i, j)
+            end do
+            print *  ! Move to the next line after printing each row
+        end do
+    end subroutine generate_nop
 
 end module Data_
