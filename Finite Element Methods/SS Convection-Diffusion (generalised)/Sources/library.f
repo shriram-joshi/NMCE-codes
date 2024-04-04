@@ -49,7 +49,7 @@ contains
 !***********************************************************************************************************************
 ! Generate Variably Spaced Mesh
 !***********************************************************************************************************************
-    subroutine generate_mesh()
+    subroutine generate_varmesh()
             
         implicit none
 
@@ -63,13 +63,7 @@ contains
             xMesh(i) = A + B/i
         end do
 
-        ! Uncomment to print out mesh points
-        print*, "Variable mesh points "
-        do i = 1, n+1
-            write(*, fmt='(F15.4)', advance='no') xMesh(i)
-        end do
-
-    end subroutine generate_mesh
+    end subroutine generate_varmesh
 !***********************************************************************************************************************
 ! Generate Variably Spaced End
 !***********************************************************************************************************************
@@ -77,7 +71,7 @@ contains
 !***********************************************************************************************************************
 ! Generate Uniform Mesh
 !***********************************************************************************************************************
-    subroutine generate_uniform_mesh()
+    subroutine generate_unifmesh()
             
         implicit none
 
@@ -91,13 +85,7 @@ contains
             xMesh(i) = A + B*i
         end do
 
-        ! Uncomment to print out mesh points
-        print*, "Uniform mesh points"
-        do i = 1, n+1
-            write(*, fmt='(F15.4)', advance='no') xMesh(i)
-        end do
-
-    end subroutine generate_uniform_mesh
+    end subroutine generate_unifmesh
 !***********************************************************************************************************************
 ! Generate Uniform Mesh End
 !***********************************************************************************************************************
