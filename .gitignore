@@ -1,3 +1,29 @@
 *.MATLABDriveTag
 *.asv
 *.png
+Finite Element Methods/SSCDR (generalised, other technique)/gmon.out
+Finite Element Methods/SSCDR (generalised, other technique)/makefile
+Finite Element Methods/SSCDR (generalised, other technique)/output
+Finite Element Methods/SSCDR (generalised, other technique)/SSCDRDiff_Data_Combined.xlsx
+Finite Element Methods/SSCDR (generalised, other technique)/Modules/data_.mod
+Finite Element Methods/SSCDR (generalised, other technique)/Modules/kind.mod
+Finite Element Methods/SSCDR (generalised, other technique)/Modules/library.mod
+Finite Element Methods/SSCDR (generalised, other technique)/Objects/Arrow_solver_hw.o
+Finite Element Methods/SSCDR (generalised, other technique)/Objects/ArrowSolver_hw.o
+Finite Element Methods/SSCDR (generalised, other technique)/Objects/assemble_local.o
+Finite Element Methods/SSCDR (generalised, other technique)/Objects/data.o
+Finite Element Methods/SSCDR (generalised, other technique)/Objects/FullGaussSolverp.o
+Finite Element Methods/SSCDR (generalised, other technique)/Objects/Global_data.o
+Finite Element Methods/SSCDR (generalised, other technique)/Objects/hwlib_dumbbell1d.o
+Finite Element Methods/SSCDR (generalised, other technique)/Objects/hwlib_slenderjet.o
+Finite Element Methods/SSCDR (generalised, other technique)/Objects/library.o
+Finite Element Methods/SSCDR (generalised, other technique)/Objects/main.o
+Finite Element Methods/SSCDR (generalised, other technique)/Objects/multifront.o
+Finite Element Methods/SSCDR (generalised, other technique)/Objects/set_kd.o
+Finite Element Methods/SSCDR (generalised, other technique)/Sources/arrow.f
+Finite Element Methods/SSCDR (generalised, other technique)/Sources/Bandedsolver.f
+Finite Element Methods/SSCDR (generalised, other technique)/Sources/data.f
+Finite Element Methods/SSCDR (generalised, other technique)/Sources/FullGaussSolverp.f
+Finite Element Methods/SSCDR (generalised, other technique)/Sources/library.f
+Finite Element Methods/SSCDR (generalised, other technique)/Sources/main.f
+Finite Element Methods/SSCDR (generalised, other technique)/Sources/set_kd.f
