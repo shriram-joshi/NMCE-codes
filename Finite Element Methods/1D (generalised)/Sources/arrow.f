@@ -20,7 +20,7 @@ SUBROUTINE ArrowSolver(NOD, IBAND, IARROW, NRHS, TAU)
  !************************************************************************************************
  !************************************************************************************************
  
- use Data_
+ use data
  Implicit None
  
  INTEGER, INTENT(IN) :: NOD, IBAND, IARROW, NRHS

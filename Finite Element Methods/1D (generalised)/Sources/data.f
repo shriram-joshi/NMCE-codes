@@ -1,4 +1,4 @@
-Module Data_
+module data
 
     use kind
     use omp_lib
@@ -6,15 +6,36 @@ Module Data_
 
     ! Declare Global variables that will be frequently used during simulation
     ! Examples are:
-
+    
+    ! Peclet number
     real(kind=rk):: Pe
+    ! Gauss quadrature points xiarr and weights wei
+    real(kind=rk), dimension(3):: xiarr, wei
+    
+    ! The basis function phi and d(phi)/d(xi) matrices for different gauss points 
     real(kind=rk), allocatable, dimension(:,:):: ph1, dph1
-    real(kind=rk), dimension(3):: xiarr
-    real(kind=rk), dimension(3):: wei
+    ! Global and local assemble vectors for the JJu = RR problem
     real(kind=rk), dimension(:), allocatable:: RG, rL, xMesh
+    ! Global and local asseblmy matrix for the JJ.u = RR problem
     real(kind=rk), dimension(:,:), allocatable:: JG, jL
-    real(kind=rk), dimension(2):: uBC, xSpan
-    integer :: nE, bft, nMesh, nVar, nLVar, nLP
+    
+    ! uBC - the boundary condition for the unkown u
+    ! xSpan - range of domain of solution
+    real(kind=rk), dimension(2):: uBC = (/0.0_rk, 1.0_rk/), xSpan = (/0.0_rk, 1.0_rk/)
+
+    ! Count keeping variables
+    ! nUnk = # of unkowns solving for in problem
+    ! nE = # of elements
+    ! bft = Integer that determines basis function type (bft)
+    !       Linear Basis Function bft = 1
+    !       Quadratic Basis Function bft = 2
+    ! nLP = # of points per element. For linear BF nLP = 2, quadratic BF nLP = 3, etc
+    ! nMesh = # of mesh nodes.  = (nLP-1)*(nE-1) + nLP
+    ! nVar = # of variables in the problem. nVar = nUnk * nMesh
+    ! nLVar = # of variables in local problem. nLVar = nUnk * nLP
+    integer :: nUnk = 1, nE, bft, nLP, nMesh, nVar,  nLVar
+
+    ! Global mesh point number matrix 
     integer, dimension(:,:), allocatable:: nop
 
 contains
@@ -23,16 +44,13 @@ contains
     subroutine init_problem()
         implicit none
         
+        call gauss_points()
+
         call param_input()
 
         allocate(nop(nLP, nE))
 
         call generate_nop()
-
-        ! Range of independant variable
-        xSpan = (/0.0_rk, 1.0_rk/)
-        ! BC for dependant variable
-        uBC = (/0.0_rk, 1.0_rk/)
 
         ! Initiallize variables
         allocate(jL(nLVar,nLVar))
@@ -53,7 +71,7 @@ contains
 
     end subroutine init_problem
 
-    subroutine Gauss_points()
+    subroutine gauss_points()
         implicit none
 
         xiarr(1)=(1.0_rk-0.774596669241483_rk)*0.5_rk
@@ -63,7 +81,20 @@ contains
         wei(2)=(0.888888888888889_rk)*0.5_rk
         wei(3)=(0.555555555555556_rk)*0.5_rk
 
-    end subroutine Gauss_points
+    end subroutine gauss_points
+
+    subroutine generate_nop()
+        implicit none
+        
+        integer:: i, j
+
+        do i = 1,nLP
+            do j = 1,nE
+                nop(i,j) = (nLP-1)*(j-1)+i
+            end do
+        end do
+
+    end subroutine generate_nop
 
     subroutine param_input()
         implicit none
@@ -98,35 +129,15 @@ contains
 
         ! Set number of local points nLP based on type of basis function
         if (bft == 1) then
-            nLP = 2;
+            nLP = 2
         else if (bft == 2) then
-            nLP = 3;
+            nLP = 3
         end if
 
-        nLVar = nLP;
+        nLVar = nUnk * nLP
         nMesh = (nLP-1)*(nE-1) + nLP
-        nVar = nMesh ! Change this if there are multiple unkowns points
+        nVar = nUnk * nMesh ! Change this if there are multiple unkowns points
 
     end subroutine param_input 
 
-    subroutine generate_nop()
-        implicit none
-        
-        integer:: i, j
-
-        do i = 1,nLP
-            do j = 1,nE
-                nop(i,j) = (nLP-1)*(j-1)+i
-            end do
-        end do
-
-        print*, "nop ="
-        do i = 1, nLP
-            do j = 1, nE
-                write(*, fmt='(I8)', advance='no') nop(i, j)
-            end do
-            print *  ! Move to the next line after printing each row
-        end do
-    end subroutine generate_nop
-
-end module Data_
+end module data
