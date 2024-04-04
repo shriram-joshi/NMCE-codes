@@ -6,40 +6,64 @@ program main
 
     implicit none
 
-    integer :: i, j, k, l
+    integer :: i, j, k, l, t
     real(kind=rk), dimension(3) :: dxdxi
+    real(kind=rk), dimension(4) :: psi, dpsi
 
     call Init_problem()
     call Gauss_points()
 
-    if(nl == 2) then
-        call lin_basis_phi1d()
-    else if (nl == 3) then
-        call quad_basis_phi1d()
-    end if
-    
-    call generate_varmesh()
+    call hermite_basis_phi1d() 
+    call generate_unifmesh()
 
-    do k = 1,n,nl-1 ! Change according to basis function used
+    do k = 1,nVar-2,2 ! Change according to basis function used
 
         ! Calculate dx/dxi
         dxdxi = 0
         do l=1,3
-            do i=1,nl
-                dxdxi(l) = dxdxi(l) + xMesh(k+i-1)*dph1(i,l) 
+            do i=1,2 ! Hermite cubics only need two points per element
+                dxdxi(l) = dxdxi(l) + xMesh(k+i-1)*dph(2*i-1,l) 
             end do
         end do
+
+        print*, "dxdxi ="
+        do t = 1, 3
+            write(*, fmt='(F15.2)', advance='no') dxdxi(t)
+        end do
+        print *  ! Move to the next line after printing each row
 
         ! Calculate the local j matrix
         jL = 0
         do i = 1,nl
             do j = 1,nl
                 do l = 1,3 ! Sum for different quadrature points
-                    jL(i,j) = jL(i,j) + wei(l)*(dph1(i,l)*dph1(j,l)/dxdxi(l) + Pe*ph1(i,l)*dph1(j,l))
-                    ! print*, "jL =", jL(i,j)    
+
+                    psi = ph(:,l)
+                    psi(2) = dxdxi(l)*ph(2,l)
+                    psi(4) = dxdxi(l)*ph(4,l)
+
+                    dpsi = dph(:,l)
+                    dpsi(2) = dxdxi(l)*dph(2,l)
+                    dpsi(4) = dxdxi(l)*dph(4,l)
+
+                    print*, "dpsi ="
+                    do t = 1, 4
+                        write(*, fmt='(F15.2)', advance='no') dpsi(t)
+                    end do
+                    print *  ! Move to the next line after printing each row
+
+                    jL(i,j) = jL(i,j) + wei(l)*(dph(i,l)*dpsi(j)/dxdxi(l) + Pe*ph(i,l)*dpsi(j))   
                 end do
             end do
         end do
+
+        ! print*, "jL ="
+        ! do i = 1, nl
+        !     do l = 1, nl
+        !         write(*, fmt='(F15.2)', advance='no') jL(i, l)
+        !     end do
+        !     print *  ! Move to the next line after printing each row
+        ! end do
 
         ! Add local j to the global J matrix [Ju = R]
         JG(k:k+nl-1,k:k+nl-1) = JG(k:k+nl-1,k:k+nl-1) + jL
@@ -49,19 +73,19 @@ program main
 
     ! Changing J and R according to the BCs
     R(1) = uBC(1)
-    R(n+1) = uBC(2)
+    R(nVar-1) = uBC(2)
 
-    JG(1,1:n+1) = 0.0_rk
-    JG(n+1,1:n+1) = 0.0_rk
+    JG(1,1:nVar) = 0.0_rk
     JG(1,1) = 1.0_rk
-    JG(n+1,n+1) = 1.0_rk
+    JG(nVar-1,1:nVar) = 0.0_rk
+    JG(nVar-1,nVar-1) = 1.0_rk
 
     call printProblemSetup()
 
-    call FullGaussSolverp(JG, R, n+1)
+    call FullGaussSolverp(JG, R, nVar)
 
     print*, "Solution, c(x) ="
-    do i = 1, n+1
+    do i = 1, nVar
         write(*, fmt='(F15.4)', advance='no') R(i)
     end do
     print*
@@ -82,21 +106,21 @@ contains
     subroutine printProblemSetup()
 
         print*, "Global J ="
-        do i = 1, n+1
-            do l = 1, n+1
+        do i = 1, nVar
+            do l = 1, nVar
                 write(*, fmt='(F15.2)', advance='no') JG(i, l)
             end do
             print *  ! Move to the next line after printing each row
         end do
 
         print*, "R ="
-        do i = 1, n+1
+        do i = 1, nVar
             write(*, fmt='(F15.2)', advance='no') R(i)
         end do
         print*
 
         ! Uncomment to print out mesh points
-        print*, "Variable mesh points, x ="
+        print*, "Mesh points, x ="
         do i = 1, n+1
             write(*, fmt='(F15.4)', advance='no') xMesh(i)
         end do

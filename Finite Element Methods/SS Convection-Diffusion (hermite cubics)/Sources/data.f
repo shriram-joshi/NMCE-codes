@@ -8,7 +8,7 @@ Module Data_
     ! Examples are:
     real(kind=rk) :: C1, C2
     real(kind=rk) :: Oh, Gbond
-    real(kind=rk), allocatable, dimension(:,:) :: ph1, dph1
+    real(kind=rk), allocatable, dimension(:,:) :: ph, dph
     real(kind=rk), dimension(3) :: xiarr
     real(kind=rk), dimension(3) :: wei
 
@@ -16,7 +16,7 @@ Module Data_
     real(kind=rk), dimension(:), allocatable :: R, xMesh
     real(kind=rk), dimension(:,:), allocatable :: JG, jL
     real(kind=rk), dimension(2) :: uBC, xSpan
-    integer :: n, nl
+    integer :: n, nl, nVar
 
 contains
 
@@ -25,6 +25,10 @@ contains
     subroutine Init_problem()
         
         call param_input()
+
+        ! Size of the local matrix (nl x nl). 
+        ! Depends on type of elements. 2 for linear, 3 for quadratic, so on
+        nl = 4
         ! BC for u
         uBC = (/0.0_rk, 1.0_rk/)
         ! Range of x
@@ -32,17 +36,17 @@ contains
 
         ! Initiallize variables
         allocate(jL(nl,nl))
-        allocate(R(n+1))
-        ! We allocate n+2 columns since the FullGaussSolverp function requires a matrix with dimesnions (n,n+1)
+        allocate(R(nVar))
+        ! We allocate nVar+1 columns since the FullGaussSolverp function requires a matrix with dimesnions (j,j+1)
         ! Check the FullGaussSolverp.f file for details
-        allocate(JG(n+1,n+2))
+        allocate(JG(nVar,nvar+1))
         allocate(xMesh(n+1))
-        allocate(ph1(nl,3))
-        allocate(dph1(nl,3))
+        allocate(ph(nl,3))
+        allocate(dph(nl,3))
 
         R = 0.0_rk
         jL = 0.0_rk
-        JG(1:n+1,1:n+2) = 0.0_rk
+        JG = 0.0_rk
 
     end subroutine Init_problem
 
@@ -67,23 +71,14 @@ contains
             print*
         end do
 
+        ! Number of unkowns
+        nVar = 2*(n+1)
+
         Pe = -1
         do while (Pe < 0)
             ! Setup Pe number and Neumann boundary conditions
             print*, "Peclet Number (Pe >= 0) - "
             read*, Pe
-            print*
-        end do
-
-        ! Size of the local matrix, depends on type of elements
-        ! 2 for linear, 3 for quadratic, so on
-        nl = 0
-        do while (.not.((nl == 2) .or. (nl == 3)))
-            ! Total number of ELEMENTS
-            print*, "Type of linear basis function."
-            print*, "2 for Linear Basis Functions"
-            print*, "3 for Quadratric Basis Functions"
-            read*, nl
             print*
         end do
 

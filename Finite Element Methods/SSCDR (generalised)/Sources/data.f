@@ -6,13 +6,10 @@ Module Data_
 
     ! Declare Global variables that will be frequently used during simulation
     ! Examples are:
-    real(kind=rk) :: C1, C2
-    real(kind=rk) :: Oh, Gbond
-    real(kind=rk), allocatable, dimension(:,:) :: ph1, dph1
+    real(kind=rk) :: Pe, Da
+    real(kind=rk), allocatable, dimension(:,:) :: ph, dph
     real(kind=rk), dimension(3) :: xiarr
     real(kind=rk), dimension(3) :: wei
-
-    real(kind=rk) :: Pe, h
     real(kind=rk), dimension(:), allocatable :: R, xMesh
     real(kind=rk), dimension(:,:), allocatable :: JG, jL
     real(kind=rk), dimension(2) :: uBC, xSpan
@@ -37,8 +34,8 @@ contains
         ! Check the FullGaussSolverp.f file for details
         allocate(JG(nVar,nVar+1))
         allocate(xMesh(n+1))
-        allocate(ph1(nl,3))
-        allocate(dph1(nl,3))
+        allocate(ph(nl,3))
+        allocate(dph(nl,3))
 
         R = 0.0_rk
         jL = 0.0_rk
@@ -74,6 +71,14 @@ contains
             ! Setup Pe number and Neumann boundary conditions
             print*, "Peclet Number (Pe >= 0) - "
             read*, Pe
+            print*
+        end do
+
+        Da = -1
+        do while (Da < 0)
+            ! Setup Pe number and Neumann boundary conditions
+            print*, "Damkohler Number (Da >= 0) - "
+            read*, Da
             print*
         end do
 

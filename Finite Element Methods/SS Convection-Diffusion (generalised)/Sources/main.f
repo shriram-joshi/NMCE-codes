@@ -18,9 +18,9 @@ program main
         call quad_basis_phi1d()
     end if
     
-    call generate_varmesh()
+    call generate_unifmesh()
 
-    do k = 1,n,nl-1 ! Change according to basis function used
+    do k = 1,nVar-1,nl-1 ! Change according to basis function used
 
         ! Calculate dx/dxi
         dxdxi = 0
@@ -49,26 +49,26 @@ program main
 
     ! Changing J and R according to the BCs
     R(1) = uBC(1)
-    R(n+1) = uBC(2)
+    R(nVar) = uBC(2)
 
-    JG(1,1:n+1) = 0.0_rk
-    JG(n+1,1:n+1) = 0.0_rk
+    JG(1,1:nVar) = 0.0_rk
+    JG(nVar,1:nVar) = 0.0_rk
     JG(1,1) = 1.0_rk
-    JG(n+1,n+1) = 1.0_rk
+    JG(nVar,nVar) = 1.0_rk
 
     call printProblemSetup()
 
-    call FullGaussSolverp(JG, R, n+1)
+    call FullGaussSolverp(JG, R, nVar)
 
     print*, "Solution, c(x) ="
-    do i = 1, n+1
+    do i = 1, nVar
         write(*, fmt='(F15.4)', advance='no') R(i)
     end do
     print*
         
     ! Output data into a file 
     ! open(1, file = 'SSCDVar-Pe_50.dat', status='new')  
-    ! do i = 1,n+1  
+    ! do i = 1,nVar  
     !    write(1,*) u(i)   
     ! end do  
     ! close(1)
@@ -82,21 +82,21 @@ contains
     subroutine printProblemSetup()
 
         print*, "Global J ="
-        do i = 1, n+1
-            do l = 1, n+1
+        do i = 1, nVar
+            do l = 1, nVar
                 write(*, fmt='(F15.2)', advance='no') JG(i, l)
             end do
             print *  ! Move to the next line after printing each row
         end do
 
         print*, "R ="
-        do i = 1, n+1
+        do i = 1, nVar
             write(*, fmt='(F15.2)', advance='no') R(i)
         end do
         print*
 
         ! Uncomment to print out mesh points
-        print*, "Variable mesh points, x ="
+        print*, "Mesh points, x ="
         do i = 1, n+1
             write(*, fmt='(F15.4)', advance='no') xMesh(i)
         end do

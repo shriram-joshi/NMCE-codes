@@ -12,13 +12,13 @@ contains
     subroutine lin_basis_phi1d()
         integer :: j
 
-        ph1=0.0_rk
-        dph1=0.0_rk
+        ph=0.0_rk
+        dph=0.0_rk
         do j=1,3
-            ph1(1,j) = 1.0_rk - xiarr(j)
-            dph1(1,j)= -1.0_rk
-            ph1(2,j) = xiarr(j)
-            dph1(2,j)= 1.0_rk
+            ph(1,j) = 1.0_rk - xiarr(j)
+            dph(1,j)= -1.0_rk
+            ph(2,j) = xiarr(j)
+            dph(2,j)= 1.0_rk
         end do
     end subroutine lin_basis_phi1d
 !***********************************************************************************************************************
@@ -31,15 +31,15 @@ contains
     subroutine quad_basis_phi1d()
         integer :: j
 
-        ph1=0.0_rk
-        dph1=0.0_rk
+        ph=0.0_rk
+        dph=0.0_rk
         do j=1,3
-            ph1(1,j) = 1.0_rk - 3.0_rk*xiarr(j) + 2.0_rk*xiarr(j)*xiarr(j)
-            dph1(1,j)= -3.0_rk + 4.0_rk*xiarr(j)
-            ph1(2,j) = 4.0_rk*(xiarr(j) - xiarr(j)*xiarr(j))
-            dph1(2,j)= 4.0_rk - 8.0_rk*xiarr(j)
-            ph1(3,j) = - xiarr(j) + 2.0_rk*xiarr(j)*xiarr(j)
-            dph1(3,j)= -1.0_rk+4.0_rk*xiarr(j)
+            ph(1,j) = 1.0_rk - 3.0_rk*xiarr(j) + 2.0_rk*xiarr(j)*xiarr(j)
+            dph(1,j)= -3.0_rk + 4.0_rk*xiarr(j)
+            ph(2,j) = 4.0_rk*(xiarr(j) - xiarr(j)*xiarr(j))
+            dph(2,j)= 4.0_rk - 8.0_rk*xiarr(j)
+            ph(3,j) = - xiarr(j) + 2.0_rk*xiarr(j)*xiarr(j)
+            dph(3,j)= -1.0_rk+4.0_rk*xiarr(j)
         end do
     end subroutine quad_basis_phi1d
 !***********************************************************************************************************************

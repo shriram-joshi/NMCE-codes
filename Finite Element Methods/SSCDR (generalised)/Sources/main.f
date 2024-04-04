@@ -26,7 +26,7 @@ program main
         dxdxi = 0
         do l=1,3
             do i=1,nl
-                dxdxi(l) = dxdxi(l) + xMesh(k+i-1)*dph1(i,l) 
+                dxdxi(l) = dxdxi(l) + xMesh(k+i-1)*dph(i,l) 
             end do
         end do
 
@@ -35,7 +35,7 @@ program main
         do i = 1,nl
             do j = 1,nl
                 do l = 1,3 ! Sum for different quadrature points
-                    jL(i,j) = jL(i,j) + wei(l)*(dph1(i,l)*dph1(j,l)/dxdxi(l) + Pe*ph1(i,l)*dph1(j,l))
+                    jL(i,j) = jL(i,j) + wei(l)*(dph(i,l)*dph(j,l)/dxdxi(l) + Pe*ph(i,l)*dph(j,l) + dxdxi(l)*Da*ph(i,l)*ph(j,l))
                     ! print*, "jL =", jL(i,j)    
                 end do
             end do
@@ -67,11 +67,11 @@ program main
     print*
         
     ! Output data into a file 
-    ! open(1, file = 'SSCDVar-Pe_50.dat', status='new')  
-    ! do i = 1,nVar  
-    !    write(1,*) u(i)   
-    ! end do  
-    ! close(1)
+    open(1, file = 'SSCDR.dat', status='new')  
+    do i = 1,nVar  
+       write(1,*) R(i)   
+    end do  
+    close(1)
 
     deallocate(jL)
     deallocate(R)
