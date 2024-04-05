@@ -128,7 +128,7 @@ OBJDIR=Objects
 
 #Add sources as $(SRCDIR)/file.f or $(SRCDIR)/file.c
 CSOURCES=
-FSOURCES= $(SRCDIR)/set_kd.f $(SRCDIR)/data.f $(SRCDIR)/library.f $(SRCDIR)/mesh.f $(SRCDIR)/assembly.f $(SRCDIR)/ui.f $(SRCDIR)/FullGaussSolverp.f $(SRCDIR)/main.f ##########################################
+FSOURCES= $(SRCDIR)/set_kd.f $(SRCDIR)/io.f $(SRCDIR)/data.f $(SRCDIR)/library.f $(SRCDIR)/mesh.f $(SRCDIR)/assembly.f  $(SRCDIR)/FullGaussSolverp.f $(SRCDIR)/main.f ##########################################
 
 FOBJECTS= $(FSOURCES:$(SRCDIR)/%.f=$(OBJDIR)/%.o)
 COBJECTS= $(CSOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
