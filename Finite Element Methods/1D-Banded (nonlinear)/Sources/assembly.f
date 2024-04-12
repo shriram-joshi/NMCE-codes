@@ -1,39 +1,28 @@
 module assembly
-
     use kind
     use data
+    use library
     implicit none
+    
 contains
-    !***********************************************************************************************************************
-    ! Global Assembly 
-    !***********************************************************************************************************************
+    
     subroutine global_assembly()
         implicit none
 
-        integer:: i, j, k
+        integer:: k
 
         do k = 1,nE ! Change according to basis function used
 
             call local_assembly(k)
 
             ! Dump local j into the global J matrix
-            do i = 1, nLVar
-                do j = 1, nLVar
-                    JG(nop(i,k),nop(j,k)) = JG(nop(i,k),nop(j,k)) + jL(i,j)
-                end do
-                RG(nop(i,k)) = RG(nop(i,k)) + rL(i)
-            end do
+            call dump(k)
+
         end do
 
         call boundary_conditions()
     end subroutine global_assembly
-    !***********************************************************************************************************************
-    ! Global Assembly Ends
-    !***********************************************************************************************************************
-
-    !***********************************************************************************************************************
-    ! Local Assembly
-    !***********************************************************************************************************************
+    
     subroutine local_assembly(n)
         implicit none
         
@@ -61,20 +50,35 @@ contains
 
             do i = 1,nLVar
                 do j = 1,nLVar
-                    jL(i,j) = jL(i,j) + wei(l)*(2.0_rk*dxdxi*KK*uL*ph(i,l)*ph(j,l) + dph(i,l)*dph(j,l)/dxdxi)
+                    jL(i,j) = jL(i,j) + wei(l)*(dph(i,l)*dph(j,l)/dxdxi + Pe*ph(i,l)*dph(j,l))
                 end do
-                rL(i) = rL(i) + wei(l)*(dxdxi*KK*uL*uL*ph(i,l) + dph(i,l)*duLdxi/dxdxi)
+                rL(i) = rL(i) + wei(l)*(duLdxi*dph(i,l)/dxdxi + Pe*duLdxi*ph(i,l))
             end do
         end do
         
     end subroutine local_assembly
-    !***********************************************************************************************************************
-    ! Local Assembly Ends
-    !***********************************************************************************************************************
+    
+    subroutine dump(n)
+        implicit none
+        integer :: n, i, j, k, l, o, p
+        
+        ! Dump local j into the global J matrix
+        do i = 1, nLVar
+            ! k loop varies over eqautions for different variables at same node
+            do k = 0, mdf(nop(i,n))-1
+                o = nopp(nop(i,n)) + k
+                do j = 1, nLVar
+                    ! l loop varies over different variables at same node
+                    do l = 0, mdf(nop(j,n))-1
+                        p = nopp(nop(j,n)) + l
+                        JG(bgbl(o,p,1),bgbl(o,p,2)) = JG(bgbl(o,p,1),bgbl(o,p,2)) + jL(i,j)
+                    end do
+                end do             
+            end do
+            RG(nop(i,n)) = RG(nop(i,n)) + rL(i)
+        end do
+    end subroutine dump
 
-    !***********************************************************************************************************************
-    ! Boundary Conditions
-    !***********************************************************************************************************************
     subroutine boundary_conditions()
         implicit none
         
@@ -85,13 +89,12 @@ contains
         ! For nonlinear code JJ*delU = -R
         RG = -RG
 
-        JG(1,1:nVar) = 0.0_rk
-        JG(nVar,1:nVar) = 0.0_rk
-        JG(1,1) = 1.0_rk
-        JG(nVar,nVar) = 1.0_rk
+        JG(1,:) = 0.0_rk
+        JG(bgbl(1,1,1),bgbl(1,1,2)) = 1.0_rk
+
+        JG(nVar, :) = 0.0_rk
+        JG(bgbl(nVar, nVar, 1), bgbl(nVar, nVar,2)) = 1.0_rk
         
     end subroutine boundary_conditions
-    !***********************************************************************************************************************
-    ! Boundary Conditions Ends
-    !***********************************************************************************************************************
+    
 end module assembly

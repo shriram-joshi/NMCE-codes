@@ -94,6 +94,8 @@ contains
 
         call gauss_points()
 
+        call inputs()
+
         ! Set number of local points nLP based on type of basis function
         if (bft == 1) then
             nLP = 2

@@ -8,8 +8,10 @@ module data
     ! Declare Global variables that will be frequently used during simulation
     ! Examples are:
     
-    ! Constant K from the problem
-    real(kind=rk):: KK, err = 1.0_rk, tol = 1e-6
+    ! Pe - Peclet Number
+    ! err - Error calculated at every iteration of NR
+    ! tol - Error tollerance. End NR procedure when err < tol 
+    real(kind=rk):: Pe, err = 1.0_rk, tol = 1e-6
     
     ! Gauss quadrature points xiarr and weights wei
     real(kind=rk), dimension(3):: xiarr, wei
@@ -27,7 +29,8 @@ module data
     ! xSpan - range of domain of solution
     real(kind=rk), dimension(2):: uBC = (/0.0_rk, 1.0_rk/), xSpan = (/0.0_rk, 1.0_rk/)
 
-    ! Book keeping variables
+    !! Book keeping variables
+    !  ----------------------
     ! nUnk = # of unkowns solving for in problem
     ! nE = # of elements
     ! bft = Integer that determines basis function type (bft)
@@ -37,12 +40,13 @@ module data
     ! nMesh = # of mesh nodes.  = (nLP-1)*(nE-1) + nLP
     ! nVar = # of variables in the problem. nVar = nUnk * nMesh
     ! nLVar = # of variables in local problem. nLVar = nUnk * nLP
-    ! nop(local point #, element #) = Global mesh point number matrix
+    ! nop(local point #, element #) = gives the global mesh point number for the arguments local point and element number
     ! nopp(global node #) = gives first global variable number for the argument global node number
     ! MDF(global node #) = number of unkowns for the argument global node number
-    integer :: nUnk = 1, nE, bft, nLP, nMesh, nVar,  nLVar, itr = 0
+    integer :: nUnk = 1, nE, bft, nLP, nMesh, nVar,  nLVar, itr = 0, bWidth
     integer, dimension(:,:), allocatable:: nop
-    integer, dimension(:), allocatable:: MDF, nopp
+    integer, dimension(:), allocatable:: mdf, nopp
+    
 contains
 
     subroutine gauss_points()
@@ -59,7 +63,6 @@ contains
 
     subroutine generate_nop()
         implicit none
-        
         integer:: i, j
 
         do i = 1,nLP
@@ -68,6 +71,9 @@ contains
             end do
         end do
 
+        ! print*, "nop -"
+        ! call print_mtrx(real(nop, kind=rk))
+
     end subroutine generate_nop
 
     subroutine generate_MDF()
@@ -75,24 +81,31 @@ contains
         integer :: i
         
         do i = 1, nMesh
-            MDF(i) = 1
+            mdf(i) = nUnk
         end do
+
+        ! print*, "mdf - ", mdf
 
     end subroutine generate_MDF
 
     subroutine generate_nopp()
         implicit none
-            integer :: i
-            nopp(1)=1
-            do i=2,nMesh
-                nopp(i)=nopp(i-1) + MDF(i-1)
-            end do
+        integer :: i
+        
+        nopp(1)=1
+        do i=2,nMesh
+            nopp(i)=nopp(i-1) + mdf(i-1)
+        end do
+
+        ! print*, "nopp - ", nopp
     end subroutine generate_nopp
 
     subroutine initialize()
         implicit none
 
         call gauss_points()
+
+        call inputs()
 
         ! Set number of local points nLP based on type of basis function
         if (bft == 1) then
@@ -104,30 +117,16 @@ contains
         nLVar = nUnk * nLP
         nMesh = (nLP-1)*(nE-1) + nLP
         nVar = nUnk * nMesh ! Change this if there are multiple unkowns points
+        bWidth = nLVar*2 - nUnk ! Might not be valid for 2D case
 
-        allocate(nop(nLP, nE))
+        call allocate_vars()
 
-        call generate_nop()
-
-        allocate(nopp(nMesh))
-
+        ! Generate book keeping arrays. Always generate in the following order
+        call generate_nop()       
+        call generate_MDF()        
         call generate_nopp()
 
-        allocate(MDF(nMesh))
-
-        call generate_MDF()
-
-        ! Initiallize variables
-        allocate(jL(nLVar,nLVar))
-        allocate(rL(nLVar))
-        allocate(RG(nVar))
-        allocate(UG(nVar))
-        ! We allocate nE+2 columns since the FullGaussSolverp function requires a matrix with dimesnions (j,j+1)
-        ! Check the FullGaussSolverp.f file for details
-        allocate(JG(nVar,nVar+1))
-        allocate(xMesh(nVar))
-        allocate(ph(nLP,3))
-        allocate(dph(nLP,3))
+        print*, "Band Width - ", bWidth
 
     end subroutine initialize
 
@@ -142,10 +141,10 @@ contains
             print*
         end do
 
-        KK = -1
-        do while (KK < 0)
-            print*, "K (K >= 0) - "
-            read*, KK
+        Pe = -1
+        do while (Pe < 0)
+            print*, "Pe (Pe >= 0) - "
+            read*, Pe
             print*
         end do
 
@@ -162,5 +161,27 @@ contains
         end do
         
     end subroutine inputs
+
+    subroutine allocate_vars() 
+        implicit none
+        
+        ! Allocate variables
+        allocate(xMesh(nVar))
+        
+        allocate(ph(nLP,3))
+        allocate(dph(nLP,3))
+
+        allocate(nop(nLP, nE))
+        allocate(mdf(nMesh))
+        allocate(nopp(nMesh))
+
+        allocate(jL(nLVar,nLVar))
+        allocate(rL(nLVar))
+
+        allocate(RG(nVar))
+        allocate(UG(nVar))
+        allocate(JG(nVar,(3*bWidth - 1)/2))
+
+    end subroutine allocate_vars
 
 end module data

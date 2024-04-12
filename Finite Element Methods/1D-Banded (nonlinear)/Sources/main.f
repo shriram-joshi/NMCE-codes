@@ -1,5 +1,5 @@
     ! --------------------------------------------------
-    ! Non-linear problem u"(x)-Ku(x)^2=0, u(0)=0, u(1)=1
+    ! u"(x)-Pe*u'(x)=0, u(0)=0, u(1)=1
     ! --------------------------------------------------
 program main
 
@@ -18,18 +18,20 @@ program main
 
     call initialize()
 
+    ! Generate basis functions
     if ( bft == 1 ) then
         call lin_basis_phi1d()
     else if ( bft == 2 ) then
         call quad_basis_phi1d()
     end if
     
-    call generate_unifmesh()
+    call generate_varmesh()
 
-    UG = 1.0_rk
+    UG = 0.0_rk
     UG(nVar) = uBC(1)
     UG(nVar) = uBC(2)
 
+    ! Newton Raphson Loop
     do while (err > tol)
 
         itr = itr + 1
@@ -40,7 +42,7 @@ program main
 
         call global_assembly()
 
-        call FullGaussSolverp(JG, RG, nVar)
+        call BANDEDSOLVER(nVar, bWidth, JG, RG)
 
         UG = UG + RG
 
@@ -54,12 +56,15 @@ program main
 
     end do
 
-    ! allocate(outputData(nVar, 2))
-    ! outputData(:,1) = xMesh
-    ! outputData(:,2) = UG
+    ! print*, 'UG - '
+    ! write(*, '(F15.4)') UG
 
-    ! fileName = 'solution'
-    ! call output_data(outputData, fileName)
+    allocate(outputData(nVar, 2))
+    outputData(:,1) = xMesh
+    outputData(:,2) = UG
+
+    fileName = 'solution'
+    call output_data(outputData, fileName)
 
 contains
 
