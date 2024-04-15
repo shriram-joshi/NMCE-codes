@@ -1,10 +1,8 @@
+*.out
+*.o
+*.mod
 *.MATLABDriveTag
 *.asv
 *.png
 *.xlsx
 *.dat
-*.out
-Finite Element Methods/1D-Banded (nonlinear)/output
-Finite Element Methods/1D-Banded (nonlinear)/.vscode/
-Finite Element Methods/1D-Banded (nonlinear)/Modules/
-Finite Element Methods/1D-Banded (nonlinear)/Sources/
