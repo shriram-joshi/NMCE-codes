@@ -126,11 +126,11 @@ endif
 SRCDIR=Sources
 OBJDIR=Objects
 
-#Add sources as $(SRCDIR)/file.f or $(SRCDIR)/file.c
+#Add sources as $(SRCDIR)/file.f90 or $(SRCDIR)/file.c
 CSOURCES=
-FSOURCES= $(SRCDIR)/set_kd.f $(SRCDIR)/io.f $(SRCDIR)/data.f $(SRCDIR)/library.f $(SRCDIR)/mesh.f $(SRCDIR)/assembly.f  $(SRCDIR)/Bandedsolver.f $(SRCDIR)/main.f ##########################################
+FSOURCES= $(SRCDIR)/set_kd.f90 $(SRCDIR)/io.f90 $(SRCDIR)/data.f90 $(SRCDIR)/library.f90 $(SRCDIR)/mesh.f90 $(SRCDIR)/assembly.f90  $(SRCDIR)/Bandedsolver.f90 $(SRCDIR)/main.f90 ##########################################
 
-FOBJECTS= $(FSOURCES:$(SRCDIR)/%.f=$(OBJDIR)/%.o)
+FOBJECTS= $(FSOURCES:$(SRCDIR)/%.f90=$(OBJDIR)/%.o)
 COBJECTS= $(CSOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 COBJECTSCMD=$(CSOURCESCMD:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
@@ -143,7 +143,7 @@ cmd: $(FSOURCES) $(CSOURCESCMD) $(EXECUTABLECMD)
 $(EXECUTABLE): $(FOBJECTS) $(COBJECTS)
 	$(FC) $(LDFLAGS) $(FOBJECTS) $(COBJECTS) -o $@ $(LIB)
 
-$(FOBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.f
+$(FOBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.f90
 	$(FC) $(FFLAGS) -c $< -o $@
 
 $(COBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c

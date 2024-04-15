@@ -5,3 +5,4 @@
 *.dat
 *.out
 Finite Element Methods/1D-Banded (nonlinear)/output
+Finite Element Methods/1D-Banded (nonlinear)/.vscode/settings.json
