@@ -108,16 +108,13 @@ contains
         nVar = nUnk * nMesh ! Change this if there are multiple unkowns points
 
         allocate(nop(nLP, nE))
-
         call generate_nop()
-
-        allocate(nopp(nMesh))
-
-        call generate_nopp()
-
+        
         allocate(MDF(nMesh))
-
         call generate_MDF()
+        
+        allocate(nopp(nMesh))
+        call generate_nopp()     
 
         ! Initiallize variables
         allocate(jL(nLVar,nLVar))
